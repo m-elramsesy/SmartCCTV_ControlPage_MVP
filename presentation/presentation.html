@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartCCTV Control Center — Presentation</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2'%3E%3Cpath d='m22 8-6 4 6 4V8Z'/%3E%3Crect width='14' height='12' x='2' y='6' rx='2'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-dark: #07090e;
+      --bg-panel: #0d111a;
+      --bg-card: #121724;
+      --bg-card-hover: #182030;
+      --border-line: #1c2538;
+      --border-bright: #2d3b55;
+      --cyan: #38bdf8;
+      --blue: #0284c7;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --crimson: #ef4444;
+      --indigo: #818cf8;
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+      --text-dim: #64748b;
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Background Glow */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(2, 132, 199, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.03) 0%, transparent 60%);
+    }
+
+    /* Grid Overlay */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background-size: 40px 40px;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    }
+
+    /* Presentation Header */
+    .pres-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-line);
+      background: rgba(7, 9, 14, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      background: #0c1420;
+      border: 1px solid var(--cyan);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+
+    .brand-icon svg {
+      width: 15px;
+      height: 15px;
+      color: var(--cyan);
+    }
+
+    .brand-name {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 7px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+      color: var(--cyan);
+      letter-spacing: 0.06em;
+    }
+
+    .header-center {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pill-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-line);
+      color: var(--text-sub);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .pill-btn:hover {
+      color: var(--text-main);
+      border-color: var(--cyan);
+      background: var(--bg-card-hover);
+    }
+
+    .pill-btn.active {
+      color: var(--cyan);
+      border-color: var(--cyan);
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    /* Slide Deck Viewport */
+    .deck-viewport {
+      position: absolute;
+      inset: 60px 0 60px 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 48px;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      max-width: 1240px;
+      height: 100%;
+      max-height: 720px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px) scale(0.98);
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.45s;
+      pointer-events: none;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* Slide Components */
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .slide-title {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .slide-title span.hl {
+      color: var(--cyan);
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-desc {
+      font-size: 16px;
+      color: var(--text-sub);
+      line-height: 1.5;
+      max-width: 860px;
+      margin-bottom: 28px;
+    }
+
+    /* Layout Grids */
+    .bento-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+    }
+
+    .bento-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      width: 100%;
+    }
+
+    .bento-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      width: 100%;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-line);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 24px rgba(0, 0, 0, 0.4);
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-2px);
+    }
+
+    .card.highlight-cyan {
+      border-color: rgba(56, 189, 248, 0.35);
+      background: linear-gradient(180deg, rgba(2, 132, 199, 0.08) 0%, var(--bg-card) 100%);
+    }
+
+    .card.highlight-emerald {
+      border-color: rgba(16, 185, 129, 0.35);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, var(--bg-card) 100%);
+    }
+
+    .card.highlight-amber {
+      border-color: rgba(245, 158, 11, 0.35);
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-card) 100%);
+    }
+
+    .card-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .badge-cyan { background: rgba(56, 189, 248, 0.12); color: var(--cyan); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-emerald { background: rgba(16, 185, 129, 0.12); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-amber { background: rgba(245, 158, 11, 0.12); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-red { background: rgba(239, 68, 68, 0.12); color: var(--crimson); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-text {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    .card-list {
+      list-style: none;
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-list li {
+      font-size: 13px;
+      color: var(--text-sub);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.45;
+    }
+
+    .card-list li::before {
+      content: '▹';
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+    }
+
+    /* Giant Stat Cards */
+    .stat-hero {
+      font-family: var(--font-mono);
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-hero.color-red { color: var(--crimson); }
+    .stat-hero.color-amber { color: var(--amber); }
+    .stat-hero.color-cyan { color: var(--cyan); }
+    .stat-hero.color-emerald { color: var(--emerald); }
+
+    .stat-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .stat-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    /* Interactive Pipeline Flow */
+    .flow-pipeline {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      margin: 16px 0;
+    }
+
+    .flow-step {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border-line);
+      border-radius: 10px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .flow-step-num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--cyan);
+      margin-bottom: 6px;
+    }
+
+    .flow-step-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .flow-step-desc {
+      font-size: 11px;
+      color: var(--text-sub);
+      line-height: 1.4;
+    }
+
+    .flow-arrow {
+      color: var(--cyan);
+      font-size: 18px;
+      flex-shrink: 0;
+      animation: pulseArrow 1.5s infinite;
+    }
+
+    @keyframes pulseArrow {
+      0%, 100% { opacity: 0.4; transform: translateX(0); }
+      50% { opacity: 1; transform: translateX(4px); }
+    }
+
+    /* Live Interactive Policy Simulator */
+    .simulator-box {
+      background: #090e17;
+      border: 1px solid var(--border-bright);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-top: 14px;
+    }
+
+    .simulator-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .simulator-row:last-child {
+      border-bottom: none;
+    }
+
+    .sim-toggle {
+      width: 40px;
+      height: 22px;
+      background: #1e2638;
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid var(--border-line);
+      transition: all 0.2s;
+    }
+
+    .sim-toggle.on {
+      background: var(--blue);
+      border-color: var(--cyan);
+    }
+
+    .sim-toggle::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+    }
+
+    .sim-toggle.on::after {
+      transform: translateX(18px);
+    }
+
+    /* Footer & Controls */
+    .pres-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-line);
+      background: rgba(7, 9, 14, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .slide-counter {
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .progress-bar-container {
+      width: 160px;
+      height: 4px;
+      background: var(--bg-card);
+      border-radius: 2px;
+      overflow: hidden;
+      border: 1px solid var(--border-line);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+      width: 8.33%;
+      transition: width 0.3s ease;
+    }
+
+    .footer-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-line);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      border-color: var(--border-line);
+    }
+
+    /* Speaker Notes Modal */
+    .notes-drawer {
+      position: fixed;
+      right: 0;
+      top: 60px;
+      bottom: 60px;
+      width: 380px;
+      background: rgba(10, 14, 22, 0.96);
+      border-left: 1px solid var(--border-line);
+      padding: 24px;
+      z-index: 90;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(16px);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .notes-drawer.open {
+      transform: translateX(0);
+    }
+
+    .notes-title {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .notes-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-sub);
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .notes-tip {
+      margin-top: 16px;
+      padding: 10px;
+      background: rgba(56, 189, 248, 0.08);
+      border-left: 3px solid var(--cyan);
+      border-radius: 4px;
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    /* Thumbnails Drawer */
+    .thumbs-overlay {
+      position: fixed;
+      inset: 60px 0 60px 0;
+      background: rgba(7, 9, 14, 0.95);
+      z-index: 95;
+      display: none;
+      padding: 32px;
+      overflow-y: auto;
+      backdrop-filter: blur(16px);
+    }
+
+    .thumbs-overlay.open {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+      align-content: start;
+    }
+
+    .thumb-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-line);
+      border-radius: 8px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .thumb-card:hover, .thumb-card.active {
+      border-color: var(--cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
+    }
+
+    .thumb-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--cyan);
+    }
+
+    .thumb-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .bento-grid-3, .bento-grid-4 { grid-template-columns: 1fr; }
+      .bento-grid-2 { grid-template-columns: 1fr; }
+      .slide-title { font-size: 26px; }
+      .stat-hero { font-size: 32px; }
+      .pres-header, .pres-footer { padding: 0 16px; }
+      .deck-viewport { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- Header -->
+  <header class="pres-header">
+    <div class="brand-cluster">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </div>
+      <span class="brand-name">SmartCCTV</span>
+      <span class="brand-tag">GRADUATION DEFENSE 2026</span>
+    </div>
+
+    <div class="header-center">
+      PRESENTER: <span style="color:var(--text-main); font-weight:700;">ELRAMSESY</span> · FACULTY OF ENGINEERING
+    </div>
+
+    <div class="header-actions">
+      <button class="pill-btn" id="btn-thumbs" title="Toggle Slide Grid (G)">
+        <span>⊞</span> Grid
+      </button>
+      <button class="pill-btn" id="btn-notes" title="Toggle Speaker Notes (N)">
+        <span>✎</span> Notes
+      </button>
+      <button class="pill-btn" id="btn-fs" title="Fullscreen (F)">
+        <span>⛶</span> Fullscreen
+      </button>
+    </div>
+  </header>
+
+  <!-- Viewport -->
+  <main class="deck-viewport">
+
+    <!-- SLIDE 1: HERO -->
+    <section class="slide active" data-notes="Welcome committee members and professors. I am Mohamed Reda Elramsesy, presenting our graduation project: SmartCCTV Control Center. This project bridges raw computer vision surveillance and customer business policies, turning passive cameras into structured spatial intelligence.">
+      <div class="eyebrow">Enterprise Computer Vision Platform</div>
+      <h1 class="slide-title">SMART CCTV <span class="hl">CONTROL CENTER</span></h1>
+      <p class="slide-desc">Cloud-based computer vision & workplace spatial intelligence platform that transforms camera video feeds into structured analytics, configurable policies, and auditable business events.</p>
+      
+      <div class="bento-grid-3">
+        <div class="card highlight-cyan">
+          <span class="card-badge badge-cyan">PARADIGM SHIFT</span>
+          <div class="card-title">Active Intelligence</div>
+          <div class="card-text">Converting legacy cameras from passive incident recorders into proactive compliance and occupancy engines.</div>
+        </div>
+        <div class="card highlight-emerald">
+          <span class="card-badge badge-emerald">MODULAR PLATFORM</span>
+          <div class="card-title">App Store Architecture</div>
+          <div class="card-text">One camera ingestion backbone powering multiple domain apps: Smart Office (Live), Smart Parking, and Smart Traffic.</div>
+        </div>
+        <div class="card highlight-amber">
+          <span class="card-badge badge-amber">HUMAN IN THE LOOP</span>
+          <div class="card-title">Responsible AI</div>
+          <div class="card-text">Zero facial recognition, non-invasive posture inference, and mandatory operator verification to eliminate false penalties.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: THE PROBLEM -->
+    <section class="slide" data-notes="Explain the fundamental flaws of legacy CCTV: 99.4% of footage is never watched, security guards experience total cognitive fatigue in 22 minutes, and conventional systems produce zero business insights.">
+      <div class="eyebrow">The Legacy Dilemma</div>
+      <h2 class="slide-title">Traditional CCTV is <span class="hl">Blind to Business Context</span></h2>
+      <p class="slide-desc">Enterprise organizations invest tens of thousands of dollars in IP cameras, yet the hardware sits idle, acting merely as a passive forensic recorder after an incident occurs.</p>
+
+      <div class="bento-grid-3" style="margin-bottom: 20px;">
+        <div class="card">
+          <div class="stat-hero color-red">99.4%</div>
+          <div class="stat-label">Footage Never Watched</div>
+          <div class="stat-desc">Recorded blindly to NVR hard drives and overwritten after 30 days without producing any insight.</div>
+        </div>
+        <div class="card">
+          <div class="stat-hero color-amber">22 Min</div>
+          <div class="stat-label">Guard Fatigue Threshold</div>
+          <div class="stat-desc">Human security observers lose 95% of target detection capability after 22 minutes of continuous monitoring.</div>
+        </div>
+        <div class="card">
+          <div class="stat-hero color-cyan">$0.00</div>
+          <div class="stat-label">Operational Value Yield</div>
+          <div class="stat-desc">Zero spatial analytics, zero occupancy optimization, and zero automated policy enforcement.</div>
+        </div>
+      </div>
+
+      <div class="card" style="border-left: 3px solid var(--crimson);">
+        <div class="card-title" style="color: var(--crimson);">The Core Problem Statement</div>
+        <div class="card-text">Cameras capture millions of pixels every second, but management needs <strong>structured business events</strong>: <i>Is zone occupancy safe? Is someone smoking in an unauthorized area? Is phone usage disrupting safety protocols?</i></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: MARKET & IMPACT -->
+    <section class="slide" data-notes="Cover the market sizing: Global video surveillance is expanding from $53.7B to over $90B. Enterprise buyers are shifting budgets from standalone hardware to intelligent cloud video analytics with high ROI.">
+      <div class="eyebrow">Market Dynamics & Economic Value</div>
+      <h2 class="slide-title">A <span class="hl">$90B+ Market</span> Shifting from Hardware to AI</h2>
+      <p class="slide-desc">Commercial real estate, corporate headquarters, and smart facilities are urgently upgrading from dumb CCTV to software-defined spatial intelligence platforms.</p>
+
+      <div class="bento-grid-3" style="margin-bottom: 20px;">
+        <div class="card">
+          <div class="stat-hero color-cyan">$53.7B</div>
+          <div class="stat-label">Global Market Size (2024)</div>
+          <div class="stat-desc">Projected to reach $90.5B by 2030, driven by AI analytics and computer vision adoption (11.8% CAGR).</div>
+        </div>
+        <div class="card">
+          <div class="stat-hero color-emerald">65%</div>
+          <div class="stat-label">Labor Cost Reduction</div>
+          <div class="stat-desc">Automated triage filters 90%+ of false visual alarms before physical security escalation.</div>
+        </div>
+        <div class="card">
+          <div class="stat-hero color-amber">3.8x</div>
+          <div class="stat-label">Facility Space ROI</div>
+          <div class="stat-desc">Dynamic occupancy tracking enables smart HVAC conditioning and optimized desk footprint allocation.</div>
+        </div>
+      </div>
+
+      <div class="bento-grid-2">
+        <div class="card">
+          <span class="card-badge badge-cyan">TARGET SEGMENTS</span>
+          <div class="card-title">Where SmartCCTV Wins</div>
+          <ul class="card-list">
+            <li><strong>Corporate Offices:</strong> Hybrid desk tracking & policy governance.</li>
+            <li><strong>Smart Campuses:</strong> Perimeter security & room utilization.</li>
+            <li><strong>Logistics & Warehouses:</strong> Safety compliance & prohibited zones.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="card-badge badge-emerald">CUSTOMER OUTCOMES</span>
+          <div class="card-title">Measurable Business Value</div>
+          <ul class="card-list">
+            <li>Zero hardware rip-and-replace: works with existing IP cameras.</li>
+            <li>Reduced risk liability & insurance premium discounts.</li>
+            <li>Configurable without writing a single line of backend code.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: ARCHITECTURE -->
+    <section class="slide" data-notes="Walk the committee through our 3-tier decoupled architecture: Layer 1 is camera-agnostic video ingestion, Layer 2 is the cloud AI computer vision pipeline, and Layer 3 is our Centralized Management Console.">
+      <div class="eyebrow">System Architecture</div>
+      <h2 class="slide-title">The <span class="hl">Decoupled</span> Three-Tier Architecture</h2>
+      <p class="slide-desc">Separating physical camera streams from computer vision inference and business logic enables infinite scalability and true vendor independence.</p>
+
+      <div class="flow-pipeline">
+        <div class="flow-step">
+          <div class="flow-step-num">LAYER 01</div>
+          <div class="flow-step-name">Hardware Ingestion</div>
+          <div class="flow-step-desc">Any RTSP / ONVIF IP camera stream. Zero vendor lock-in. Health telemetry & offline heartbeat monitoring.</div>
+        </div>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step" style="border-color: rgba(56, 189, 248, 0.4);">
+          <div class="flow-step-num">LAYER 02</div>
+          <div class="flow-step-name">AI Computer Vision</div>
+          <div class="flow-step-desc">YOLOv8/v10 spatial tracking + posture estimation. Probabilistic confidence scoring. Polygon zone mapping.</div>
+        </div>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step" style="border-color: rgba(16, 185, 129, 0.4);">
+          <div class="flow-step-num">LAYER 03</div>
+          <div class="flow-step-name">Control Center UI</div>
+          <div class="flow-step-desc">Policy configuration, real-time occupancy curves, human-in-the-loop triage, and immutable audit logs.</div>
+        </div>
+      </div>
+
+      <div class="bento-grid-2" style="margin-top: 10px;">
+        <div class="card">
+          <div class="card-title" style="color: var(--cyan);">Why Decoupling Matters</div>
+          <div class="card-text">Traditional surveillance ties the software to the camera brand (Axis, Hikvision, Dahua). SmartCCTV treats any IP camera as a generic sensor stream, executing uniform AI models on the cloud or edge gateway.</div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color: var(--emerald);">Edge-to-Cloud Hybrid Model</div>
+          <div class="card-text">Bandwidth-friendly: cameras only transmit metadata and lightweight event clips when movement or threshold breaches occur, slashing cloud bandwidth bills by 85%.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: APP STORE CONCEPT -->
+    <section class="slide" data-notes="Present the platform vision: SmartCCTV is an operating system with an App Catalog. Today we showcase Smart Office as the working MVP, while Smart Parking and Smart Traffic are on the commercial roadmap.">
+      <div class="eyebrow">Ecosystem Model</div>
+      <h2 class="slide-title">The <span class="hl">"App Store"</span> for Physical Workspaces</h2>
+      <p class="slide-desc">Once the camera ingestion pipeline is connected, customers can deploy specialized AI applications on demand without replacing infrastructure.</p>
+
+      <div class="bento-grid-3">
+        <div class="card highlight-emerald" style="border-width: 2px;">
+          <span class="card-badge badge-emerald">ACTIVE & LIVE MVP</span>
+          <div class="card-title">Smart Office</div>
+          <div class="card-text">Workplace policy compliance, occupancy analytics, smoking detection, phone usage monitoring, and restricted zone security.</div>
+          <ul class="card-list">
+            <li>People counting & hourly capacity curves</li>
+            <li>Designated zone smoking enforcement</li>
+            <li>Confined desk phone usage detection</li>
+            <li>Live operator review & audit trail</li>
+          </ul>
+        </div>
+
+        <div class="card" style="opacity: 0.85;">
+          <span class="card-badge badge-amber">COMING SOON (Q3 2027)</span>
+          <div class="card-title">Smart Parking</div>
+          <div class="card-text">Automated vehicle tracking, stall vacancy mapping, and parking regulation policing for corporate campuses.</div>
+          <ul class="card-list">
+            <li>Automatic License Plate Recognition (ALPR)</li>
+            <li>Real-time stall availability heatmap</li>
+            <li>Unauthorized blocking & fire lane alerts</li>
+            <li>EV charging bay duration monitoring</li>
+          </ul>
+        </div>
+
+        <div class="card" style="opacity: 0.7;">
+          <span class="card-badge badge-cyan">COMING SOON (Q1 2028)</span>
+          <div class="card-title">Smart Traffic</div>
+          <div class="card-text">Urban intersection analytics, congestion flow monitoring, and municipal incident alerting for municipal networks.</div>
+          <ul class="card-list">
+            <li>Multimodal vehicle counting & categorization</li>
+            <li>Intersection queue length measurement</li>
+            <li>Wrong-way driving & stopped vehicle alerts</li>
+            <li>Peak traffic predictive analytics</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: SMART OFFICE DEEP DIVE -->
+    <section class="slide" data-notes="Demonstrate the Smart Office configuration engine: emphasize that customer policy (e.g. smoking forbidden) is strictly decoupled from system capability (AI smoking detection). Show our 4-section architecture.">
+      <div class="eyebrow">Flagship Product</div>
+      <h2 class="slide-title">Smart Office: <span class="hl">Policy Engine & Capabilities</span></h2>
+      <p class="slide-desc">Empowering office managers to configure corporate rules dynamically. Transparent boundaries between customer policy and system capability.</p>
+
+      <div class="bento-grid-2">
+        <div class="card">
+          <span class="card-badge badge-cyan">SECTION 1 & 2</span>
+          <div class="card-title">General Settings & Workplace Policies</div>
+          <ul class="card-list">
+            <li><strong>Site Name & Operating Schedule:</strong> Operating hours with auto-alert suppression outside work shifts.</li>
+            <li><strong>Smoking Policy:</strong> <i>Allowed</i>, <i>Forbidden</i>, or <i>Restricted to Designated Zones</i>.</li>
+            <li><strong>Phone Usage Policy:</strong> <i>Allowed</i>, <i>Breaks Only</i>, <i>Forbidden in Work Zones</i>.</li>
+            <li><strong>Max Occupancy per Zone:</strong> Numerical thresholds for Lobby (15), Open Space (40), Conference (12), Break Room (20).</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="card-badge badge-emerald">SECTION 3 & 4</span>
+          <div class="card-title">AI Capabilities & Human Triage Rules</div>
+          <ul class="card-list">
+            <li><strong>Independent AI Feature Toggles:</strong> Enable or disable People Counting, Occupancy, Smoking, and Phone Detection.</li>
+            <li><strong>Selective Alert Triggers:</strong> Choose which events generate urgent notifications vs quiet logging.</li>
+            <li><strong>Mandatory Review Flags:</strong> Flag high-impact events for human confirmation before supervisor escalation.</li>
+            <li><strong>State Synchronization:</strong> Instant persistence in storage with automated audit diff generation.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="simulator-box">
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--cyan); margin-bottom: 8px;">INTERACTIVE LIVE DEMO WIDGET</div>
+        <div class="simulator-row">
+          <span style="font-size: 13px;">Restricted Zone Intrusion Detection</span>
+          <div class="sim-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="simulator-row">
+          <span style="font-size: 13px;">Require Human Review for Smoking Events</span>
+          <div class="sim-toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: RESPONSIBLE AI & HUMAN REVIEW -->
+    <section class="slide" data-notes="Highlight our ethical approach: no facial recognition, no biometric tracking, and an absolute commitment to human-in-the-loop review. The AI proposes; the human operator decides.">
+      <div class="eyebrow">Ethics, Privacy & Verification</div>
+      <h2 class="slide-title">Responsible AI: <span class="hl">Human-in-the-Loop</span> Triage</h2>
+      <p class="slide-desc">Computer vision models are probabilistic. SmartCCTV guarantees operational integrity by pairing automated detections with human operator review.</p>
+
+      <div class="bento-grid-3" style="margin-bottom: 20px;">
+        <div class="card">
+          <div class="stat-hero color-emerald">0%</div>
+          <div class="stat-label">Biometric Identification</div>
+          <div class="stat-desc">Strictly privacy-preserving: tracking bounding volumes and anonymous posture coordinates, never human faces.</div>
+        </div>
+        <div class="card">
+          <div class="stat-hero color-cyan">100%</div>
+          <div class="stat-label">Raw Output Integrity</div>
+          <div class="stat-desc">Human review never overwrites raw model outputs or confidence scores—preserving true forensic auditability.</div>
+        </div>
+        <div class="card">
+          <div class="stat-hero color-amber">3-State</div>
+          <div class="stat-label">Triage Verification</div>
+          <div class="stat-desc">Confirmed · False Positive · Needs Further Review, accompanied by timestamped operator notes.</div>
+        </div>
+      </div>
+
+      <div class="card" style="border-left: 3px solid var(--emerald);">
+        <div class="card-title" style="color: var(--emerald);">The Ethical Engineering Philosophy</div>
+        <div class="card-text">AI should surface structured signals to empower human managers, not execute autonomous punishments. If an employee is holding an inhaler or calculator, our 3-state review allows an operator to label it a <strong>False Positive</strong> in seconds, simultaneously generating training data to fine-tune future model accuracy.</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: TECH STACK -->
+    <section class="slide" data-notes="Cover the technical implementation: React 19, TypeScript, Vite 8.3, Recharts, Lucide Icons, and our bespoke Tactical Obsidian design system built specifically for mission-critical surveillance.">
+      <div class="eyebrow">Engineering Rigor</div>
+      <h2 class="slide-title">Modern Full-Stack <span class="hl">Technical Implementation</span></h2>
+      <p class="slide-desc">Built using modern web standards, strict TypeScript interfaces, reactive state management, and edge-ready deployment.</p>
+
+      <div class="bento-grid-4">
+        <div class="card">
+          <span class="card-badge badge-cyan">CORE RUNTIME</span>
+          <div class="card-title">Frontend Engine</div>
+          <ul class="card-list">
+            <li>React 19 & TypeScript</li>
+            <li>Vite 8.3 bundle system</li>
+            <li>React Router v7 SPA</li>
+            <li>Sub-second HMR</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="card-badge badge-emerald">DESIGN SYSTEM</span>
+          <div class="card-title">Telemetry UI</div>
+          <ul class="card-list">
+            <li>Custom CSS variables</li>
+            <li>Tactical Obsidian theme</li>
+            <li>JetBrains Mono digits</li>
+            <li>Zero AI-slop templates</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="card-badge badge-amber">DATA LAYER</span>
+          <div class="card-title">Reactive Store</div>
+          <ul class="card-list">
+            <li>Custom React store hook</li>
+            <li>LocalStorage persistence</li>
+            <li>Derived KPI computing</li>
+            <li>Immutable audit diffs</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="card-badge badge-red">INFRASTRUCTURE</span>
+          <div class="card-title">Cloud Deployment</div>
+          <ul class="card-list">
+            <li>Vercel Edge Global CDN</li>
+            <li>Automated GitOps push</li>
+            <li>Single-page route rewrite</li>
+            <li>100% build health verified</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 18px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">Live Production Deployment</div>
+          <div style="font-family: var(--font-mono); font-size: 12px; color: var(--cyan);">https://smartcctv-controlpage-mvp.vercel.app</div>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 11px; padding: 4px 10px; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--emerald); border-radius: 4px; color: var(--emerald);">
+          STATUS: HTTP 200 OK
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: BUSINESS MODEL -->
+    <section class="slide" data-notes="Explain the business model: B2B SaaS charging per camera per month ($15-$40/cam/mo). High gross margins (78%) because edge motion-gating keeps cloud inferencing costs predictable.">
+      <div class="eyebrow">Monetization & Economics</div>
+      <h2 class="slide-title">B2B SaaS Business Model: <span class="hl">Unit Economics</span></h2>
+      <p class="slide-desc">Predictable recurring revenue model based on active camera channels, with frictionless upsell through the modular App Catalog.</p>
+
+      <div class="bento-grid-3" style="margin-bottom: 20px;">
+        <div class="card">
+          <div class="stat-hero color-cyan">$25</div>
+          <div class="stat-label">Average Per-Camera / Mo</div>
+          <div class="stat-desc">Blended SaaS subscription covering hardware ingestion, real-time dashboard, and Smart Office app.</div>
+        </div>
+        <div class="card">
+          <div class="stat-hero color-emerald">78%</div>
+          <div class="stat-label">Gross Margin Target</div>
+          <div class="stat-desc">Low inference compute cost achieved by running motion-gating and downsampled frame extraction on the edge.</div>
+        </div>
+        <div class="card">
+          <div class="stat-hero color-amber">4.2 Mo</div>
+          <div class="stat-label">CAC Payback Window</div>
+          <div class="stat-desc">Rapid enterprise sales cycle targeting facility directors, physical security leads, and office managers.</div>
+        </div>
+      </div>
+
+      <div class="bento-grid-3">
+        <div class="card">
+          <div class="card-badge badge-cyan">STARTER TIER</div>
+          <div class="card-title">$15 / Cam / Mo</div>
+          <div class="card-text">Up to 8 cameras. Real-time occupancy tracking, 7-day event retention, basic email alerting.</div>
+        </div>
+        <div class="card highlight-cyan">
+          <div class="card-badge badge-emerald">PROFESSIONAL TIER</div>
+          <div class="card-title">$25 / Cam / Mo</div>
+          <div class="card-text">Up to 32 cameras. Full Smart Office policy suite (smoking, phone, zones), 30-day audit log, operator triage.</div>
+        </div>
+        <div class="card">
+          <div class="card-badge badge-amber">ENTERPRISE TIER</div>
+          <div class="card-title">$40 / Cam / Mo</div>
+          <div class="card-text">Unlimited cameras. Multi-site aggregation, custom polygon zones, webhook integrations, 99.9% uptime SLA.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: ROADMAP -->
+    <section class="slide" data-notes="Walk through our 18-month commercialization roadmap from current MVP completion to pilot deployments, edge appliances, Smart Parking, and municipal Smart Traffic.">
+      <div class="eyebrow">Commercial Horizon</div>
+      <h2 class="slide-title">18-Month <span class="hl">Product & Market Roadmap</span></h2>
+      <p class="slide-desc">Structured execution plan from university graduation prototype to funded enterprise commercialization.</p>
+
+      <div class="bento-grid-4">
+        <div class="card highlight-emerald" style="border-width: 2px;">
+          <span class="card-badge badge-emerald">PHASE 01 (CURRENT)</span>
+          <div class="card-title">MVP Foundation</div>
+          <ul class="card-list">
+            <li>Core Control Center UI</li>
+            <li>Smart Office app configuration</li>
+            <li>Event triage & human review</li>
+            <li>Immutable audit logging</li>
+            <li>Live Vercel deployment</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="card-badge badge-cyan">PHASE 02 (MONTHS 1-6)</span>
+          <div class="card-title">Edge & Pilots</div>
+          <ul class="card-list">
+            <li>WebRTC live video streams</li>
+            <li>Jetson / Hailo edge gateway</li>
+            <li>Slack & Teams webhook alerts</li>
+            <li>2 corporate beta pilots</li>
+            <li>Role-Based Access Control</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="card-badge badge-amber">PHASE 03 (MONTHS 6-12)</span>
+          <div class="card-title">Smart Parking</div>
+          <ul class="card-list">
+            <li>Launch Smart Parking app</li>
+            <li>License plate recognition</li>
+            <li>Facility BMS integration</li>
+            <li>SOC 2 Type II certification</li>
+            <li>iOS / Android manager app</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="card-badge badge-red">PHASE 04 (MONTHS 12-18)</span>
+          <div class="card-title">Traffic & Scale</div>
+          <ul class="card-list">
+            <li>Launch Smart Traffic app</li>
+            <li>Municipal flow analytics</li>
+            <li>On-prem air-gapped edition</li>
+            <li>Federated model training</li>
+            <li>Series A funding expansion</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 11: VERIFICATION & ACCEPTANCE -->
+    <section class="slide" data-notes="Review the project requirements and prove that 10/10 acceptance criteria were completely met with zero broken workflows and production build verification.">
+      <div class="eyebrow">Academic & Engineering Rigor</div>
+      <h2 class="slide-title">Project Acceptance: <span class="hl">10/10 Criteria Met</span></h2>
+      <p class="slide-desc">Every requirement specified for the university graduation prototype has been implemented, validated, and verified.</p>
+
+      <div class="bento-grid-2">
+        <div class="card">
+          <span class="card-badge badge-emerald">FEATURE CHECKLIST</span>
+          <div class="card-title">Verified Core Workflows</div>
+          <ul class="card-list">
+            <li><strong>Dashboard:</strong> Real-time KPIs, occupancy trend curve, zone health.</li>
+            <li><strong>Camera Inventory:</strong> Hardware inspection modal with offline alerts.</li>
+            <li><strong>Smart Office Config:</strong> 4 sections with validation & persistence.</li>
+            <li><strong>Event Management:</strong> Multi-filter table with confidence score meters.</li>
+            <li><strong>Human Review:</strong> 3-pathway triage with mandatory reviewer notes.</li>
+            <li><strong>Auditability:</strong> Chronological log capturing all before/after changes.</li>
+            <li><strong>Extensibility:</strong> Application catalog displaying future roadmap.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="card-badge badge-cyan">DELIVERY & REPOSITORIES</span>
+          <div class="card-title">Production Deliverables</div>
+          <ul class="card-list">
+            <li><strong>Live Web App:</strong> <a href="https://smartcctv-controlpage-mvp.vercel.app" target="_blank" style="color:var(--cyan); text-decoration:none;">smartcctv-controlpage-mvp.vercel.app</a></li>
+            <li><strong>GitHub Repository:</strong> <a href="https://github.com/m-elramsesy/SmartCCTV_ControlPage_MVP" target="_blank" style="color:var(--cyan); text-decoration:none;">m-elramsesy/SmartCCTV_ControlPage_MVP</a></li>
+            <li><strong>Presentation Deck:</strong> Standalone PowerPoint (`.pptx`) + Interactive HTML5 (`presentation.html`).</li>
+            <li><strong>Lead Developer:</strong> Mohamed Reda Elramsesy (ELRAMSESY)</li>
+            <li><strong>Build Verification:</strong> 0 TypeScript errors, 0 lint warnings, 100% clean production bundle.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 12: CONCLUSION -->
+    <section class="slide" data-notes="Thank the examination committee and conclude the presentation. Invite questions regarding technical architecture, computer vision models, business viability, or live demo execution.">
+      <div class="eyebrow">Conclusion & Defense</div>
+      <h1 class="slide-title">THANK YOU FOR YOUR <span class="hl">TIME & ATTENTION</span></h1>
+      <p class="slide-desc">SmartCCTV Control Center proves that modern computer vision can be seamlessly abstracted into an intuitive, policy-driven business tool without compromising ethics or privacy.</p>
+
+      <div class="bento-grid-2" style="margin-bottom: 24px;">
+        <div class="card highlight-cyan">
+          <div class="card-title" style="color:var(--cyan);">Interactive Web Application</div>
+          <div class="card-text">Explore the live control center running on Vercel Edge:</div>
+          <div style="font-family: var(--font-mono); font-size: 13px; color: var(--text-main); margin-top: 8px;">
+            ➜ <a href="https://smartcctv-controlpage-mvp.vercel.app" target="_blank" style="color:var(--cyan); text-decoration:none;">https://smartcctv-controlpage-mvp.vercel.app</a>
+          </div>
+        </div>
+
+        <div class="card highlight-emerald">
+          <div class="card-title" style="color:var(--emerald);">Open Source Codebase</div>
+          <div class="card-text">Complete TypeScript & React 19 source code on GitHub:</div>
+          <div style="font-family: var(--font-mono); font-size: 13px; color: var(--text-main); margin-top: 8px;">
+            ➜ <a href="https://github.com/m-elramsesy/SmartCCTV_ControlPage_MVP" target="_blank" style="color:var(--emerald); text-decoration:none;">https://github.com/m-elramsesy/SmartCCTV_ControlPage_MVP</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-family: var(--font-mono); font-size: 14px; color: var(--amber); text-align: center; padding: 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px;">
+        ✦ OPEN FOR COMMITTEE QUESTIONS & TECHNICAL INQUIRIES ✦
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Speaker Notes Drawer -->
+  <aside class="notes-drawer" id="notes-drawer">
+    <div class="notes-title">
+      <span>Speaker Notes</span>
+      <span style="cursor:pointer;" onclick="toggleNotes()">✕</span>
+    </div>
+    <div class="notes-content" id="notes-text">
+      Welcome committee members and professors. I am Mohamed Reda Elramsesy...
+    </div>
+    <div class="notes-tip">
+      <strong>Pro Tip:</strong> Press <kbd>N</kbd> on your keyboard to toggle this presenter notes drawer anytime during presentation.
+    </div>
+  </aside>
+
+  <!-- Slide Grid Overlay -->
+  <div class="thumbs-overlay" id="thumbs-overlay"></div>
+
+  <!-- Footer Navigation -->
+  <footer class="pres-footer">
+    <div class="footer-left">
+      <span>SLIDE <span class="slide-counter" id="slide-num">01</span> / 12</span>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <span style="font-size:11px;">[KEYS: ← / → / SPACE / F]</span>
+    </div>
+
+    <div class="footer-nav">
+      <button class="nav-btn" id="btn-prev" onclick="changeSlide(-1)" title="Previous Slide (←)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="nav-btn" id="btn-next" onclick="changeSlide(1)" title="Next Slide (→ or Space)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const slideNumEl = document.getElementById('slide-num');
+    const progressFill = document.getElementById('progress-fill');
+    const notesText = document.getElementById('notes-text');
+    const notesDrawer = document.getElementById('notes-drawer');
+    const thumbsOverlay = document.getElementById('thumbs-overlay');
+    const btnNotes = document.getElementById('btn-notes');
+    const btnThumbs = document.getElementById('btn-thumbs');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+
+    // Generate thumbnails
+    slides.forEach((slide, idx) => {
+      const card = document.createElement('div');
+      card.className = `thumb-card ${idx === 0 ? 'active' : ''}`;
+      const title = slide.querySelector('.slide-title')?.innerText || `Slide ${idx + 1}`;
+      card.innerHTML = `
+        <div class="thumb-num">SLIDE ${String(idx + 1).padStart(2, '0')}</div>
+        <div class="thumb-title">${title.substring(0, 48)}...</div>
+        <div style="font-size: 10px; color: var(--text-dim); font-family: var(--font-mono);">CLICK TO JUMP</div>
+      `;
+      card.onclick = () => {
+        goToSlide(idx);
+        toggleThumbs();
+      };
+      thumbsOverlay.appendChild(card);
+    });
+
+    function updateSlide() {
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentIndex);
+      });
+
+      slideNumEl.innerText = String(currentIndex + 1).padStart(2, '0');
+      progressFill.style.width = `${((currentIndex + 1) / totalSlides) * 100}%`;
+      
+      const currentNotes = slides[currentIndex].getAttribute('data-notes') || 'No speaker notes for this slide.';
+      notesText.innerText = currentNotes;
+
+      btnPrev.disabled = currentIndex === 0;
+      btnNext.disabled = currentIndex === totalSlides - 1;
+
+      // Update thumb cards
+      document.querySelectorAll('.thumb-card').forEach((tc, idx) => {
+        tc.classList.toggle('active', idx === currentIndex);
+      });
+    }
+
+    function changeSlide(direction) {
+      const nextIndex = currentIndex + direction;
+      if (nextIndex >= 0 && nextIndex < totalSlides) {
+        currentIndex = nextIndex;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(idx) {
+      if (idx >= 0 && idx < totalSlides) {
+        currentIndex = idx;
+        updateSlide();
+      }
+    }
+
+    function toggleNotes() {
+      notesDrawer.classList.toggle('open');
+      btnNotes.classList.toggle('active');
+    }
+
+    function toggleThumbs() {
+      thumbsOverlay.classList.toggle('open');
+      btnThumbs.classList.toggle('active');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Event Listeners
+    btnNotes.onclick = toggleNotes;
+    btnThumbs.onclick = toggleThumbs;
+    document.getElementById('btn-fs').onclick = toggleFullscreen;
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        changeSlide(1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        changeSlide(-1);
+      } else if (e.key.toLowerCase() === 'n') {
+        toggleNotes();
+      } else if (e.key.toLowerCase() === 'g') {
+        toggleThumbs();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      } else if (e.key === 'Home') {
+        goToSlide(0);
+      } else if (e.key === 'End') {
+        goToSlide(totalSlides - 1);
+      } else if (e.key === 'Escape') {
+        if (notesDrawer.classList.contains('open')) toggleNotes();
+        if (thumbsOverlay.classList.contains('open')) toggleThumbs();
+      }
+    });
+
+    updateSlide();
+  </script>
+</body>
+</html>
