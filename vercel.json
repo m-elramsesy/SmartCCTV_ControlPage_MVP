@@ -1,4 +1,5 @@
 {
+  "name": "smartcctv-controlpage-mvp",
   "rewrites": [
     {
       "source": "/(.*)",
